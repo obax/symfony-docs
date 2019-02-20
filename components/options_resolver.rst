@@ -36,7 +36,7 @@ Imagine you have a ``Mailer`` class which has four options: ``host``,
         }
     }
 
-When accessing the ``$options``, you need to add some boilerplate code to
+When accessing the ``$options``, you need to add a lot of boilerplate code to
 check which options are set::
 
     class Mailer
@@ -46,17 +46,29 @@ check which options are set::
         {
             $mail = ...;
 
-            $mail->setHost($this->options['host'] ?? 'smtp.example.org');
-            $mail->setUsername($this->options['username'] ?? 'user');
-            $mail->setPassword($this->options['password'] ?? 'pa$$word');
-            $mail->setPort($this->options['port'] ?? 25);
+            $mail->setHost(isset($this->options['host'])
+                ? $this->options['host']
+                : 'smtp.example.org');
+
+            $mail->setUsername(isset($this->options['username'])
+                ? $this->options['username']
+                : 'user');
+
+            $mail->setPassword(isset($this->options['password'])
+                ? $this->options['password']
+                : 'pa$$word');
+
+            $mail->setPort(isset($this->options['port'])
+                ? $this->options['port']
+                : 25);
 
             // ...
         }
     }
 
-Also, the default values of the options are buried in the business logic of your
-code. Use the :phpfunction:`array_replace` to fix that::
+This boilerplate is hard to read and repetitive. Also, the default values of the
+options are buried in the business logic of your code. Use the
+:phpfunction:`array_replace` to fix that::
 
     class Mailer
     {
@@ -665,7 +677,7 @@ default value::
 Nested options also support required options, validation (type, value) and
 normalization of their values. If the default value of a nested option depends
 on another option defined in the parent level, add a second ``Options`` argument
-to the closure to access to them::
+to the closure to access them::
 
     class Mailer
     {
@@ -689,7 +701,7 @@ to the closure to access to them::
     ``Options`` respectively. Otherwise, the closure itself is considered as the
     default value of the option.
 
-In same way, parent options can access to the nested options as normal arrays::
+In the same way, parent options can access to the nested options as normal arrays::
 
     class Mailer
     {
